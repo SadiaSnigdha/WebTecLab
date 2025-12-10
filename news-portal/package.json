@@ -1,0 +1,20 @@
+{
+  "name": "news-portal",
+  "version": "1.0.0",
+  "description": "A Simple News Portal using JSON-Server",
+  "main": "index.js",
+  "scripts": {
+    "server": "json-server --watch db.json --port 3000",
+    "dev": "npm run server"
+  },
+  "keywords": [
+    "news",
+    "portal",
+    "json-server"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "json-server": "^0.17.4"
+  }
+}

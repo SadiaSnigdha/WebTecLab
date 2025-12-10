@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Portal - Login</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h1>📰 News Portal</h1>
+            <p>Welcome! Please select your account to continue.</p>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="userSelect">Select User:</label>
+                    <select id="userSelect" required>
+                        <option value="">-- Choose a User --</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+
+            <div id="errorMessage" class="error-message"></div>
+        </div>
+    </div>
+
+    <script src="utils.js"></script>
+    <script src="login.js"></script>
+</body>
+</html>

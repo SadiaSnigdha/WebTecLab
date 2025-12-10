@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Portal - News List</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <h1>📰 News Portal</h1>
+            <div class="navbar-right">
+                <span id="loggedInUser" class="logged-in-info"></span>
+                <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="news-list-header">
+            <h2>All News</h2>
+            <button id="createNewsBtn" class="btn btn-primary">+ Create News</button>
+        </div>
+
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search news by title...">
+        </div>
+
+        <div id="newsList" class="news-list">
+            <p class="loading">Loading news...</p>
+        </div>
+
+        <div id="pagination" class="pagination"></div>
+    </div>
+
+    <script src="utils.js"></script>
+    <script src="news-list.js"></script>
+</body>
+</html>
