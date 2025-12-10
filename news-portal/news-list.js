@@ -150,7 +150,7 @@ async function deleteNewsItem(newsId) {
     }
 }
 
-// Helper functions
+
 function truncateText(text, length) {
     if (text.length > length) {
         return text.substring(0, length) + '...';

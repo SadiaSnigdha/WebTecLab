@@ -1,17 +1,14 @@
-// Login Page Script
 document.addEventListener('DOMContentLoaded', async () => {
     const userSelect = document.getElementById('userSelect');
     const loginForm = document.getElementById('loginForm');
     const errorMessage = document.getElementById('errorMessage');
 
-    // Check if user already logged in
     const loggedInUser = getLoggedInUser();
     if (loggedInUser) {
         goToNewsList();
         return;
     }
 
-    // Load users from API
     try {
         const users = await getAllUsers();
         users.forEach(user => {
@@ -26,7 +23,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         errorMessage.style.display = 'block';
     }
 
-    // Handle login
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
         

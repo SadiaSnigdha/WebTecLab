@@ -1,4 +1,3 @@
-// Edit News Page Script
 document.addEventListener('DOMContentLoaded', async () => {
     const user = checkAuthentication();
     if (!user) return;
@@ -22,11 +21,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // Load news
     try {
         const news = await getNewsById(newsId);
 
-        // Check if user is the author
         if (parseInt(news.author_id) !== parseInt(user.id)) {
             errorMessage.textContent = 'You are not authorized to edit this news.';
             errorMessage.style.display = 'block';
@@ -34,7 +31,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        // Pre-fill form
         newsTitle.value = news.title;
         newsBody.value = news.body;
     } catch (error) {
@@ -63,7 +59,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const title = newsTitle.value.trim();
         const body = newsBody.value.trim();
 
-        // Validate
         let isValid = true;
 
         if (!validateNewsTitle(title)) {

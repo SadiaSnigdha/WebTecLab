@@ -1,4 +1,3 @@
-// News Detail Page Script
 document.addEventListener('DOMContentLoaded', async () => {
     const user = checkAuthentication();
     if (!user) return;
@@ -28,10 +27,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // Load news
     await loadNewsDetail(newsId);
 
-    // Handle add comment
     addCommentForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
