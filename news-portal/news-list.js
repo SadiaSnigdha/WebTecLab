@@ -16,8 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const newsList = document.getElementById('newsList');
 
     logoutBtn.addEventListener('click', () => {
-        removeLoggedInUser();
-        goToLogin();
+        logout();
     });
 
     createNewsBtn.addEventListener('click', () => {
@@ -39,8 +38,11 @@ async function loadNews() {
         const newsList = document.getElementById('newsList');
         newsList.innerHTML = '<p class="loading">Loading news...</p>';
         
+        console.log('loadNews - Starting to fetch news...');
         allNews = await getAllNews();
+        console.log('loadNews - allNews received:', allNews, 'Length:', allNews.length);
         filteredNews = [...allNews];
+        console.log('loadNews - filteredNews set:', filteredNews, 'Length:', filteredNews.length);
         displayNews();
     } catch (error) {
         console.error('Failed to load news:', error);
@@ -70,8 +72,8 @@ async function displayNews() {
     newsList.innerHTML = '';
 
     for (const news of paginatedNews) {
-        const authorName = await getUserName(news.author_id);
-        const isAuthor = parseInt(news.author_id) === parseInt(user.id);
+        const authorName = news.author?.name || 'Unknown';
+        const isAuthor = parseInt(news.authorId) === parseInt(user.id);
 
         const newsElement = document.createElement('div');
         newsElement.className = 'news-item';
@@ -131,7 +133,7 @@ async function deleteNewsItem(newsId) {
     const user = getLoggedInUser();
     const news = allNews.find(n => n.id === newsId);
 
-    if (parseInt(news.author_id) !== parseInt(user.id)) {
+    if (parseInt(news.authorId) !== parseInt(user.id)) {
         alert('You can only delete news you created.');
         return;
     }

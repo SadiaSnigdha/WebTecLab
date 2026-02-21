@@ -16,8 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const errorMessage = document.getElementById('errorMessage');
 
     logoutBtn.addEventListener('click', () => {
-        removeLoggedInUser();
-        goToLogin();
+        logout();
     });
 
     cancelBtn.addEventListener('click', () => {
@@ -39,13 +38,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         let isValid = true;
 
         if (!validateNewsTitle(title)) {
-            titleError.textContent = 'Title cannot be empty.';
+            titleError.textContent = 'Title must be between 5 and 255 characters.';
             titleError.style.display = 'block';
             isValid = false;
         }
 
         if (!validateNewsBody(body)) {
-            bodyError.textContent = 'Body must be at least 20 characters.';
+            bodyError.textContent = 'Body must be at least 10 characters.';
             bodyError.style.display = 'block';
             isValid = false;
         }
@@ -53,7 +52,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!isValid) return;
 
         try {
-            await createNews(title, body, user.id);
+            console.log('Creating news with:', { title, body });
+            const result = await createNews(title, body);
+            console.log('News created successfully:', result);
+            
             successMessage.textContent = 'News created successfully!';
             successMessage.style.display = 'block';
             
@@ -61,8 +63,23 @@ document.addEventListener('DOMContentLoaded', async () => {
                 goToNewsList();
             }, 1500);
         } catch (error) {
-            console.error('Failed to create news:', error);
-            errorMessage.textContent = 'Failed to create news. Please try again.';
+            console.error('Failed to create news - Full error:', error);
+            console.error('Error message:', error.message);
+            console.error('Error stack:', error.stack);
+            
+            let errorMsg = 'Failed to create news. Please try again.';
+            if (error.message) {
+                if (error.message.includes('401') || error.message.includes('Unauthorized')) {
+                    errorMsg = 'Session expired. Please login again.';
+                    setTimeout(() => logout(), 2000);
+                } else if (error.message.includes('fetch')) {
+                    errorMsg = 'Cannot connect to server. Please ensure backend is running.';
+                } else {
+                    errorMsg = error.message;
+                }
+            }
+            
+            errorMessage.textContent = errorMsg;
             errorMessage.style.display = 'block';
         }
     });

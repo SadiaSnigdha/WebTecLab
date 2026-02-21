@@ -1,20 +1,26 @@
-{
+﻿{
   "name": "news-portal",
-  "version": "1.0.0",
-  "description": "A Simple News Portal using JSON-Server",
-  "main": "index.js",
+  "version": "2.0.0",
+  "description": "A Professional News Portal with Express Backend and Vanilla JS Frontend",
+  "main": "backend/server.js",
   "scripts": {
-    "server": "json-server --watch db.json --port 3000",
-    "dev": "npm run server"
+    "backend": "cd backend && npm start",
+    "backend:dev": "cd backend && npm run dev",
+    "backend:migrate": "cd backend && npm run db:migrate",
+    "backend:seed": "cd backend && npm run db:seed",
+    "backend:reset": "cd backend && npm run db:reset",
+    "backend:install": "cd backend && npm install"
   },
   "keywords": [
     "news",
     "portal",
-    "json-server"
+    "express",
+    "sequelize",
+    "jwt",
+    "rest-api"
   ],
   "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "json-server": "^0.17.4"
-  }
+  "license": "ISC"
 }
+
+

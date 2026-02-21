@@ -1,32 +1,110 @@
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'http://localhost:5000/api';
 
 async function fetchAPI(endpoint, options = {}) {
+    console.log('Fetching:', API_BASE_URL + endpoint, options);
     try {
+        const token = getAuthToken();
+        const headers = {
+            'Content-Type': 'application/json',
+            ...options.headers
+        };
+        
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        console.log('Request headers:', headers);
+        
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-            headers: {
-                'Content-Type': 'application/json',
-                ...options.headers
-            },
+            headers,
             ...options
         });
 
+        console.log('Response status:', response.status);
+        
+        const data = await response.json();
+        console.log('Response data:', data);
+
         if (!response.ok) {
-            throw new Error(`HTTP Error: ${response.status}`);
+            throw new Error(data.message || `HTTP Error: ${response.status}`);
         }
 
-        return await response.json();
+        return data;
     } catch (error) {
-        console.error('API Error:', error);
+        console.error('Fetch API Error Details:', {
+            message: error.message,
+            endpoint: endpoint,
+            fullUrl: API_BASE_URL + endpoint,
+            error: error
+        });
         throw error;
     }
 }
 
+// Authentication functions
+async function login(email, password) {
+    const response = await fetchAPI('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password })
+    });
+    
+    if (response.success && response.data) {
+        saveAuthToken(response.data.token);
+        saveLoggedInUser(response.data.user);
+        return response.data;
+    }
+    throw new Error(response.message || 'Login failed');
+}
+
+async function register(name, email, password) {
+    const response = await fetchAPI('/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({ name, email, password })
+    });
+    
+    if (response.success && response.data) {
+        saveAuthToken(response.data.token);
+        saveLoggedInUser(response.data.user);
+        return response.data;
+    }
+    throw new Error(response.message || 'Registration failed');
+}
+
+async function getMe() {
+    const response = await fetchAPI('/auth/me');
+    if (response.success && response.data) {
+        saveLoggedInUser(response.data);
+        return response.data;
+    }
+    return null;
+}
+
+function saveAuthToken(token) {
+    localStorage.setItem('authToken', token);
+}
+
+function getAuthToken() {
+    return localStorage.getItem('authToken');
+}
+
+function removeAuthToken() {
+    localStorage.removeItem('authToken');
+}
+
+function logout() {
+    removeAuthToken();
+    removeLoggedInUser();
+    goToLogin();
+}
+
 async function getAllUsers() {
-    return await fetchAPI('/users');
+    const response = await fetchAPI('/users');
+    return response.data || [];
 }
 
 async function getUserById(id) {
-    return await fetchAPI(`/users/${id}`);
+    const response = await fetchAPI(`/users/${id}`);
+    return response.data;
 }
 
 async function getUserName(userId) {
@@ -35,48 +113,52 @@ async function getUserName(userId) {
 }
 
 async function getAllNews() {
-    return await fetchAPI('/news');
+    const response = await fetchAPI('/news');
+    console.log('getAllNews - Full response:', response);
+    console.log('getAllNews - response.data:', response.data);
+    console.log('getAllNews - response.data?.news:', response.data?.news);
+    const newsArray = response.data?.news || [];
+    console.log('getAllNews - Returning array:', newsArray, 'Length:', newsArray.length);
+    return newsArray;
 }
 
 async function getNewsById(id) {
-    return await fetchAPI(`/news/${id}`);
+    const response = await fetchAPI(`/news/${id}`);
+    console.log('getNewsById - Full response:', response);
+    console.log('getNewsById - response.data:', response.data);
+    console.log('getNewsById - response.data.news:', response.data.news);
+    return response.data.news;
 }
 
-async function createNews(title, body, authorId) {
-    return await fetchAPI('/news', {
+async function createNews(title, body) {
+    const response = await fetchAPI('/news', {
         method: 'POST',
-        body: JSON.stringify({
-            title,
-            body,
-            author_id: authorId,
-            createdAt: new Date().toISOString(),
-            comments: []
-        })
+        body: JSON.stringify({ title, body })
     });
+    return response.data;
 }
 
 async function updateNews(id, updates) {
-    return await fetchAPI(`/news/${id}`, {
-        method: 'PATCH',
+    const response = await fetchAPI(`/news/${id}`, {
+        method: 'PUT',
         body: JSON.stringify(updates)
     });
+    return response.data;
 }
 
 async function deleteNews(id) {
-    return await fetchAPI(`/news/${id}`, {
+    const response = await fetchAPI(`/news/${id}`, {
         method: 'DELETE'
     });
+    return response.data;
 }
 
-async function addComment(newsId, userId, text) {
-    const news = await getNewsById(newsId);
-    const newComment = {
-        id: Date.now(),
-        user_id: userId,
-        text: text
-    };
-    news.comments.push(newComment);
-    return await updateNews(newsId, { comments: news.comments });
+async function addComment(newsId, content) {
+    const response = await fetchAPI(`/news/${newsId}/comments`, {
+        method: 'POST',
+        body: JSON.stringify({ text: content })
+    });
+    return response.data;
 }
 
 function saveLoggedInUser(user) {
@@ -94,11 +176,13 @@ function removeLoggedInUser() {
 
 
 function validateNewsTitle(title) {
-    return title && title.trim().length > 0;
+    const trimmed = title ? title.trim() : '';
+    return trimmed.length >= 5 && trimmed.length <= 255;
 }
 
 function validateNewsBody(body) {
-    return body && body.trim().length >= 20;
+    const trimmed = body ? body.trim() : '';
+    return trimmed.length >= 10;
 }
 
 function validateComment(text) {

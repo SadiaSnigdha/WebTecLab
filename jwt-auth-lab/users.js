@@ -15,4 +15,6 @@ const users = [
   }
 ];
 
+console.log("Loaded Users:", users); 
+
 module.exports = users;

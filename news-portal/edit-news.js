@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const news = await getNewsById(newsId);
 
-        if (parseInt(news.author_id) !== parseInt(user.id)) {
+        if (parseInt(news.authorId) !== parseInt(user.id)) {
             errorMessage.textContent = 'You are not authorized to edit this news.';
             errorMessage.style.display = 'block';
             editNewsForm.style.display = 'none';
@@ -40,8 +40,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     logoutBtn.addEventListener('click', () => {
-        removeLoggedInUser();
-        goToLogin();
+        logout();
     });
 
     cancelBtn.addEventListener('click', () => {
@@ -62,13 +61,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         let isValid = true;
 
         if (!validateNewsTitle(title)) {
-            titleError.textContent = 'Title cannot be empty.';
+            titleError.textContent = 'Title must be between 5 and 255 characters.';
             titleError.style.display = 'block';
             isValid = false;
         }
 
         if (!validateNewsBody(body)) {
-            bodyError.textContent = 'Body must be at least 20 characters.';
+            bodyError.textContent = 'Body must be at least 10 characters.';
             bodyError.style.display = 'block';
             isValid = false;
         }
@@ -88,7 +87,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }, 1500);
         } catch (error) {
             console.error('Failed to update news:', error);
-            errorMessage.textContent = 'Failed to update news. Please try again.';
+            errorMessage.textContent = error.message || 'Failed to update news. Please try again.';
             errorMessage.style.display = 'block';
         }
     });

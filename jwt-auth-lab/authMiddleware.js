@@ -1,9 +1,8 @@
 const jwt = require("jsonwebtoken");
-
-const SECRET_KEY = "MY_SECRET_KEY";
+const { SECRET_KEY } = require("./config");
 
 function authenticateToken(req, res, next) {
-  const authHeader = req.headers["authorization"];
+  const authHeader = req.headers.authorization;
 
   if (!authHeader) {
     return res.status(401).json({ message: "Token not provided" });
@@ -16,7 +15,7 @@ function authenticateToken(req, res, next) {
       return res.status(403).json({ message: "Invalid or expired token" });
     }
 
-    req.user = decoded; 
+    req.user = decoded;
     next();
   });
 }

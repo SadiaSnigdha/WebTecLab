@@ -41,6 +41,24 @@ body {
     margin-bottom: 30px;
 }
 
+.login-help {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f0f4ff;
+    border-radius: 6px;
+    border-left: 4px solid #667eea;
+}
+
+.login-help p {
+    margin: 5px 0;
+    font-size: 0.9em;
+    text-align: left;
+}
+
+.login-help strong {
+    color: #667eea;
+}
+
 /* Navbar */
 .navbar {
     background: white;

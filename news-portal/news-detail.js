@@ -13,8 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const commentMessage = document.getElementById('commentMessage');
 
     logoutBtn.addEventListener('click', () => {
-        removeLoggedInUser();
-        goToLogin();
+        logout();
     });
 
     backBtn.addEventListener('click', () => {
@@ -44,7 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         try {
-            await addComment(newsId, user.id, text);
+            await addComment(newsId, text);
             commentMessage.textContent = 'Comment added successfully!';
             commentMessage.className = 'message success';
             commentMessage.style.display = 'block';
@@ -56,7 +55,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }, 1000);
         } catch (error) {
             console.error('Failed to add comment:', error);
-            commentMessage.textContent = 'Failed to add comment. Please try again.';
+            commentMessage.textContent = error.message || 'Failed to add comment. Please try again.';
             commentMessage.className = 'message error';
             commentMessage.style.display = 'block';
         }
@@ -71,7 +70,7 @@ async function loadNewsDetail(newsId) {
         const commentsList = document.getElementById('commentsList');
         const commentCount = document.getElementById('commentCount');
 
-        const authorName = await getUserName(news.author_id);
+        const authorName = news.author?.name || 'Unknown';
 
         newsDetail.innerHTML = `
             <h2>${escapeHtml(news.title)}</h2>
@@ -83,7 +82,7 @@ async function loadNewsDetail(newsId) {
                 ${escapeHtml(news.body)}
             </div>
             <div class="detail-actions">
-                ${parseInt(news.author_id) === parseInt(user.id) ? `
+                ${parseInt(news.authorId) === parseInt(user.id) ? `
                     <button class="btn btn-success" onclick="goToEditNews(${news.id})">Edit</button>
                     <button class="btn btn-danger" onclick="deleteNewsItem(${news.id})">Delete</button>
                 ` : ''}
@@ -98,12 +97,12 @@ async function loadNewsDetail(newsId) {
         } else {
             commentsList.innerHTML = '';
             for (const comment of news.comments) {
-                const commenterName = await getUserName(comment.user_id);
+                const commenterName = comment.user?.name || 'Unknown';
                 const commentElement = document.createElement('div');
                 commentElement.className = 'comment-item';
                 commentElement.innerHTML = `
                     <div class="comment-author">${escapeHtml(commenterName)}</div>
-                    <div class="comment-text">${escapeHtml(comment.text)}</div>
+                    <div class="comment-text">${escapeHtml(comment.content)}</div>
                 `;
                 commentsList.appendChild(commentElement);
             }
@@ -118,7 +117,7 @@ async function deleteNewsItem(newsId) {
     const user = getLoggedInUser();
     const news = await getNewsById(newsId);
 
-    if (parseInt(news.author_id) !== parseInt(user.id)) {
+    if (parseInt(news.authorId) !== parseInt(user.id)) {
         alert('You can only delete news you created.');
         return;
     }
