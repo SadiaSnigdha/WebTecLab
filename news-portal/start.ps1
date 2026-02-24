@@ -14,17 +14,17 @@ Start-Sleep -Seconds 3
 
 # Start Frontend Server
 Write-Host "Starting Frontend Server on port 3000..." -ForegroundColor Green
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$PWD'; python -m http.server 3000"
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$PWD\frontend'; python -m http.server 3000"
 
 # Wait a bit
 Start-Sleep -Seconds 2
 
 Write-Host "Backend API:  http://localhost:5000/api" -ForegroundColor Yellow
-Write-Host "Frontend:     http://localhost:3000" -ForegroundColor Yellow
+Write-Host "Frontend:     http://localhost:3000/index.html" -ForegroundColor Yellow
 Write-Host ""
 Write-Host "Opening browser..." -ForegroundColor Green
 Start-Sleep -Seconds 3
-Start-Process "http://localhost:3000"
+Start-Process "http://localhost:3000/index.html"
 
 Write-Host ""
 Write-Host "Press any key to exit (servers will keep running)..." -ForegroundColor Gray
