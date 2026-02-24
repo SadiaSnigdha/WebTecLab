@@ -1,13 +1,11 @@
 const { Comment, User, News } = require('../models');
 
-// @desc    Get all comments for a news
-// @route   GET /api/news/:newsId/comments
-// @access  Public
+
 exports.getCommentsByNews = async (req, res, next) => {
   try {
     const { newsId } = req.params;
 
-    // Check if news exists
+  
     const news = await News.findByPk(newsId);
     if (!news) {
       return res.status(404).json({
@@ -38,15 +36,13 @@ exports.getCommentsByNews = async (req, res, next) => {
   }
 };
 
-// @desc    Create comment
-// @route   POST /api/news/:newsId/comments
-// @access  Private
+
 exports.createComment = async (req, res, next) => {
   try {
     const { newsId } = req.params;
     const { text } = req.body;
 
-    // Check if news exists
+   
     const news = await News.findByPk(newsId);
     if (!news) {
       return res.status(404).json({
@@ -61,7 +57,7 @@ exports.createComment = async (req, res, next) => {
       newsId
     });
 
-    // Fetch the created comment with user details
+ 
     const createdComment = await Comment.findByPk(comment.id, {
       include: {
         model: User,
@@ -82,9 +78,7 @@ exports.createComment = async (req, res, next) => {
   }
 };
 
-// @desc    Update comment
-// @route   PUT /api/comments/:id
-// @access  Private
+
 exports.updateComment = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -99,7 +93,7 @@ exports.updateComment = async (req, res, next) => {
       });
     }
 
-    // Check if user is the author
+  
     if (comment.userId !== req.user.id) {
       return res.status(403).json({
         success: false,
@@ -109,7 +103,7 @@ exports.updateComment = async (req, res, next) => {
 
     await comment.update({ text });
 
-    // Fetch updated comment with user details
+ 
     const updatedComment = await Comment.findByPk(id, {
       include: {
         model: User,
@@ -130,9 +124,7 @@ exports.updateComment = async (req, res, next) => {
   }
 };
 
-// @desc    Delete comment
-// @route   DELETE /api/comments/:id
-// @access  Private
+
 exports.deleteComment = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -146,7 +138,7 @@ exports.deleteComment = async (req, res, next) => {
       });
     }
 
-    // Check if user is the author
+   
     if (comment.userId !== req.user.id) {
       return res.status(403).json({
         success: false,

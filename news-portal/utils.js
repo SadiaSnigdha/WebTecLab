@@ -26,6 +26,15 @@ async function fetchAPI(endpoint, options = {}) {
         console.log('Response data:', data);
 
         if (!response.ok) {
+            // Handle token expiration
+            if (response.status === 401 && data.message && 
+                (data.message.includes('Token has expired') || 
+                 data.message.includes('expired') ||
+                 data.message.includes('Token is not valid'))) {
+                alert('Your session has expired. Please login again.');
+                logout();
+                return;
+            }
             throw new Error(data.message || `HTTP Error: ${response.status}`);
         }
 

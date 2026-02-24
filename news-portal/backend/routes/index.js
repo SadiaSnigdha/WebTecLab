@@ -6,7 +6,6 @@ const commentRoutes = require('./commentRoutes');
 
 const router = express.Router();
 
-// Health check route
 router.get('/', (req, res) => {
   res.json({
     success: true,
@@ -15,7 +14,6 @@ router.get('/', (req, res) => {
   });
 });
 
-// API routes
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
 router.use('/news', newsRoutes);

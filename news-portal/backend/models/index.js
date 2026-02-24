@@ -3,7 +3,7 @@ const User = require('./User');
 const News = require('./News');
 const Comment = require('./Comment');
 
-// Define associations
+
 User.hasMany(News, { foreignKey: 'authorId', as: 'news' });
 News.belongsTo(User, { foreignKey: 'authorId', as: 'author' });
 

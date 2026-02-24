@@ -39,7 +39,7 @@ module.exports = {
       }
     });
 
-    // Add indexes for better query performance
+   
     await queryInterface.addIndex('news', ['author_id']);
     await queryInterface.addIndex('news', ['createdAt']);
   },

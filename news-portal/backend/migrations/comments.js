@@ -45,7 +45,7 @@ module.exports = {
       }
     });
 
-    // Add indexes for better query performance
+
     await queryInterface.addIndex('comments', ['user_id']);
     await queryInterface.addIndex('comments', ['news_id']);
     await queryInterface.addIndex('comments', ['createdAt']);

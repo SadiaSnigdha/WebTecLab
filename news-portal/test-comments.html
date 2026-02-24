@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Comments Display</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .comment-item {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border-left: 3px solid #27ae60;
+        }
+        .comment-author {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .comment-text {
+            color: #000;
+            line-height: 1.6;
+            font-size: 14px;
+            padding: 5px 0;
+            display: block;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .debug {
+            background: #fffacd;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Comment Display Test</h1>
+    <button onclick="loadComments()">Load Comments from News #1</button>
+    
+    <div id="debug" class="debug">Click button to load comments...</div>
+    
+    <div id="comments-container"></div>
+
+    <script>
+        async function loadComments() {
+            const debug = document.getElementById('debug');
+            const container = document.getElementById('comments-container');
+            
+            try {
+                debug.innerHTML = 'Loading comments...';
+                
+                const response = await fetch('http://localhost:5000/api/news/1/comments');
+                const data = await response.json();
+                
+                debug.innerHTML = `
+                    <strong>API Response:</strong><br>
+                    Success: ${data.success}<br>
+                    Count: ${data.count}<br>
+                    Comments: ${JSON.stringify(data.data.comments, null, 2)}
+                `;
+                
+                container.innerHTML = '';
+                
+                if (data.data.comments && data.data.comments.length > 0) {
+                    data.data.comments.forEach((comment, index) => {
+                        const div = document.createElement('div');
+                        div.className = 'comment-item';
+                        div.innerHTML = `
+                            <div class="comment-author">Comment #${index + 1}: ${comment.user.name}</div>
+                            <div class="comment-text">${comment.text}</div>
+                            <div style="font-size: 11px; color: #999; margin-top: 5px;">
+                                ID: ${comment.id} | Posted: ${new Date(comment.createdAt).toLocaleString()}
+                            </div>
+                        `;
+                        container.appendChild(div);
+                    });
+                } else {
+                    container.innerHTML = '<p>No comments found</p>';
+                }
+                
+            } catch (error) {
+                debug.innerHTML = `<strong>Error:</strong> ${error.message}`;
+                console.error(error);
+            }
+        }
+        
+        // Auto-load on page load
+        window.addEventListener('DOMContentLoaded', loadComments);
+    </script>
+</body>
+</html>

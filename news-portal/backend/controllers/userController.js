@@ -1,8 +1,5 @@
 const { User } = require('../models');
 
-// @desc    Get all users
-// @route   GET /api/users
-// @access  Public
 exports.getAllUsers = async (req, res, next) => {
   try {
     const users = await User.findAll({
@@ -21,9 +18,7 @@ exports.getAllUsers = async (req, res, next) => {
   }
 };
 
-// @desc    Get single user
-// @route   GET /api/users/:id
-// @access  Public
+
 exports.getUserById = async (req, res, next) => {
   try {
     const user = await User.findByPk(req.params.id, {
@@ -48,15 +43,13 @@ exports.getUserById = async (req, res, next) => {
   }
 };
 
-// @desc    Update user
-// @route   PUT /api/users/:id
-// @access  Private
+
 exports.updateUser = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { name, email } = req.body;
 
-    // Check if user exists
+  
     const user = await User.findByPk(id);
     if (!user) {
       return res.status(404).json({
@@ -65,7 +58,6 @@ exports.updateUser = async (req, res, next) => {
       });
     }
 
-    // Check if user is updating their own profile
     if (req.user.id !== parseInt(id)) {
       return res.status(403).json({
         success: false,
@@ -73,7 +65,7 @@ exports.updateUser = async (req, res, next) => {
       });
     }
 
-    // Update user
+  
     await user.update({ name, email });
 
     res.json({
@@ -88,14 +80,11 @@ exports.updateUser = async (req, res, next) => {
   }
 };
 
-// @desc    Delete user
-// @route   DELETE /api/users/:id
-// @access  Private
+
 exports.deleteUser = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    // Check if user exists
     const user = await User.findByPk(id);
     if (!user) {
       return res.status(404).json({
@@ -104,7 +93,6 @@ exports.deleteUser = async (req, res, next) => {
       });
     }
 
-    // Check if user is deleting their own account
     if (req.user.id !== parseInt(id)) {
       return res.status(403).json({
         success: false,
@@ -112,7 +100,7 @@ exports.deleteUser = async (req, res, next) => {
       });
     }
 
-    // Delete user
+
     await user.destroy();
 
     res.json({

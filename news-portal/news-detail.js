@@ -55,7 +55,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             }, 1000);
         } catch (error) {
             console.error('Failed to add comment:', error);
-            commentMessage.textContent = error.message || 'Failed to add comment. Please try again.';
+            
+            let errorMsg = 'Failed to add comment. Please try again.';
+            if (error.message) {
+                if (error.message.includes('Token has expired') || 
+                    error.message.includes('401') || 
+                    error.message.includes('Unauthorized')) {
+                    errorMsg = 'Your session has expired. Please login again.';
+                    setTimeout(() => logout(), 2000);
+                } else {
+                    errorMsg = error.message;
+                }
+            }
+            
+            commentMessage.textContent = errorMsg;
             commentMessage.className = 'message error';
             commentMessage.style.display = 'block';
         }
@@ -96,13 +109,17 @@ async function loadNewsDetail(newsId) {
             commentsList.innerHTML = '<p class="no-comments">No comments yet. Be the first to comment!</p>';
         } else {
             commentsList.innerHTML = '';
+            console.log('Loading comments:', news.comments);
             for (const comment of news.comments) {
                 const commenterName = comment.user?.name || 'Unknown';
+                const commentText = comment.text || '';
+                console.log('Rendering comment:', { commenterName, commentText });
+                
                 const commentElement = document.createElement('div');
                 commentElement.className = 'comment-item';
                 commentElement.innerHTML = `
                     <div class="comment-author">${escapeHtml(commenterName)}</div>
-                    <div class="comment-text">${escapeHtml(comment.content)}</div>
+                    <div class="comment-text">${escapeHtml(commentText)}</div>
                 `;
                 commentsList.appendChild(commentElement);
             }

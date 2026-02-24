@@ -1,8 +1,6 @@
 const { News, User, Comment } = require('../models');
 
-// @desc    Get all news
-// @route   GET /api/news
-// @access  Public
+
 exports.getAllNews = async (req, res, next) => {
   try {
     const { page = 1, limit = 10, sort = 'createdAt', order = 'DESC' } = req.query;
@@ -46,9 +44,7 @@ exports.getAllNews = async (req, res, next) => {
   }
 };
 
-// @desc    Get single news
-// @route   GET /api/news/:id
-// @access  Public
+
 exports.getNewsById = async (req, res, next) => {
   try {
     const news = await News.findByPk(req.params.id, {
@@ -89,9 +85,7 @@ exports.getNewsById = async (req, res, next) => {
   }
 };
 
-// @desc    Create news
-// @route   POST /api/news
-// @access  Private
+
 exports.createNews = async (req, res, next) => {
   try {
     const { title, body } = req.body;
@@ -102,7 +96,7 @@ exports.createNews = async (req, res, next) => {
       authorId: req.user.id
     });
 
-    // Fetch the created news with author details
+    
     const createdNews = await News.findByPk(news.id, {
       include: {
         model: User,
@@ -123,9 +117,7 @@ exports.createNews = async (req, res, next) => {
   }
 };
 
-// @desc    Update news
-// @route   PUT /api/news/:id
-// @access  Private
+
 exports.updateNews = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -140,7 +132,7 @@ exports.updateNews = async (req, res, next) => {
       });
     }
 
-    // Check if user is the author
+   
     if (news.authorId !== req.user.id) {
       return res.status(403).json({
         success: false,
@@ -150,7 +142,7 @@ exports.updateNews = async (req, res, next) => {
 
     await news.update({ title, body });
 
-    // Fetch updated news with author details
+    
     const updatedNews = await News.findByPk(id, {
       include: {
         model: User,
@@ -171,9 +163,7 @@ exports.updateNews = async (req, res, next) => {
   }
 };
 
-// @desc    Delete news
-// @route   DELETE /api/news/:id
-// @access  Private
+
 exports.deleteNews = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -187,7 +177,7 @@ exports.deleteNews = async (req, res, next) => {
       });
     }
 
-    // Check if user is the author
+   
     if (news.authorId !== req.user.id) {
       return res.status(403).json({
         success: false,
